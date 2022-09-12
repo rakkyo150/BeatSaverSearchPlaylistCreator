@@ -1,5 +1,7 @@
 window.onload = start;
 
+var progress_bar;
+
 function start() {
     let lastUrl = "";
 
@@ -17,7 +19,7 @@ function start() {
         }
     });
     var config = {
-        childList: true
+        childList: true,
     };
     mo.observe(main, config);
 }
@@ -67,6 +69,20 @@ function core() {
 
             second_div.appendChild(new_button);
 
+            var progress_div = document.createElement("div");
+            progress_div.classList.add("progress");
+            progress_div.style = "height: 5px;";
+            second_div.appendChild(progress_div);
+
+            progress_bar = document.createElement("div");
+            progress_bar.classList.add("progress-bar");
+            progress_bar.setAttribute("role", "progressbar");
+            progress_bar.style = "width: 0%;";
+            progress_bar.setAttribute("aria-valuenow", "0");
+            progress_bar.setAttribute("aria-valuemin", "0");
+            progress_bar.setAttribute("aria-valuemax", "100");
+            progress_div.appendChild(progress_bar);
+
             clearInterval(jsInitCheckTimer);
         }
     }
@@ -91,10 +107,14 @@ function OnButtonClick() {
     if (location.href == "https://beatsaver.com/") {
         params = defaultOrder;
     } else if (location.href.match(/order=/)) {
-        params = location.href.replace("https://beatsaver.com/?", "").replace('order','sortOrder');
+        params = location.href
+            .replace("https://beatsaver.com/?", "")
+            .replace("order", "sortOrder");
     } else {
         params =
-            location.href.replace("https://beatsaver.com/?", "") +'&'+ defaultOrder;
+            location.href.replace("https://beatsaver.com/?", "") +
+            "&" +
+            defaultOrder;
     }
 
     CreateMapDataJson(params)
@@ -107,6 +127,9 @@ function OnButtonClick() {
             link.download = playlistName + ".bplist";
 
             link.click();
+
+            progress_bar.style = `width: 0%;`;
+            progress_bar.setAttribute("aria-valuenow", "0");
         })
         .catch((error) => {
             throw new Error(error);
@@ -121,7 +144,7 @@ function CreateMapDataJson(params) {
             songs: [],
         };
 
-        // 最大200譜面
+        // 最大20譜面×10ページの200譜面
         let pageNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
         let promise = Promise.resolve(playlistJson);
@@ -160,9 +183,15 @@ function RequestBeatSaver(page, params, playlistJson) {
             })
             .then((responseJson) => {
                 console.log(responseJson);
+                var progressPercentage = (page + 1) * 10;
 
                 if (responseJson.docs == null) {
                     console.log("null");
+                    progress_bar.style = `width: ${progressPercentage}%;`;
+                    progress_bar.setAttribute(
+                        "aria-valuenow",
+                        `${progressPercentage}`,
+                    );
                     resolve(playlistJson);
                 }
 
@@ -170,6 +199,11 @@ function RequestBeatSaver(page, params, playlistJson) {
                     playlistJson.songs.push({ hash: map.versions.pop().hash });
                 });
 
+                progress_bar.style = `width: ${progressPercentage}%;`;
+                progress_bar.setAttribute(
+                    "aria-valuenow",
+                    `${progressPercentage}`,
+                );
                 resolve(playlistJson);
             })
             .catch(() => {
