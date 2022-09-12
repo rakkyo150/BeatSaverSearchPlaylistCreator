@@ -143,6 +143,7 @@ function CreateMapDataJson(params) {
             playlistTitle: playlistName,
             playlistAuthor: "PlaylistCreatorFromBeatSaverSearch",
             songs: [],
+            params: params,
             image: "base64," + base64Image
         };
 
