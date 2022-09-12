@@ -6,7 +6,7 @@
     "content_scripts": [
         {
             "matches": [
-                "https://beatsaver.com/?*"
+                "https://beatsaver.com/*"
             ],
             "js": [
                 "BeatSaver.js"

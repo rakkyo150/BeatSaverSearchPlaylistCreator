@@ -1,24 +1,75 @@
 window.onload = start;
 
 function start() {
-    var form = document.querySelector("form");
-    console.log(form);
+    let lastUrl = "";
 
-    var new_div = document.createElement("div");
-    new_div.classList.add("row");
-    form.appendChild(new_div);
+    // 初回実行の必要あり
+    core();
 
-    var second_div = document.createElement("div");
-    second_div.classList.add("mb-3", "d-grid");
-    new_div.appendChild(second_div);
+    var main = document.querySelector("main");
 
-    var new_button = document.createElement("button");
-    new_button.type = "button";
-    new_button.classList.add("btn", "btn-secondary");
-    new_button.onclick = OnButtonClick;
-    new_button.textContent = "Create Playlist";
+    var mo = new MutationObserver(function () {
+        let url = location.href;
+        console.log(url);
+        if (url !== lastUrl) {
+            lastUrl = url;
+            core();
+        }
+    });
+    var config = {
+        childList: true
+    };
+    mo.observe(main, config);
+}
 
-    second_div.appendChild(new_button);
+function core() {
+    let retryCount = 0;
+    const maxRetry = 3;
+    const jsInitCheckTimer = setInterval(jsLoaded, 1000);
+    function jsLoaded() {
+        if (document.querySelector("body main form") == null) {
+            retryCount++;
+            if (retryCount == maxRetry) {
+                console.log("3秒間必要な要素が見つからなかったので終了");
+                clearInterval(jsInitCheckTimer);
+            }
+        } else {
+            let searchUrl = "https://beatsaver.com/?";
+
+            if (
+                location.href != "https://beatsaver.com/" &&
+                !location.href.match(searchUrl)
+            ) {
+                console.log("urlout");
+                return;
+            }
+
+            var form = document.querySelector("body main form");
+            console.log(form);
+
+            var div_row_count = form.querySelectorAll("div.row");
+            // ボタンの増殖防止
+            if (div_row_count.length == 3) return;
+
+            var new_div = document.createElement("div");
+            new_div.classList.add("row");
+            form.appendChild(new_div);
+
+            var second_div = document.createElement("div");
+            second_div.classList.add("mb-3", "d-grid");
+            new_div.appendChild(second_div);
+
+            var new_button = document.createElement("button");
+            new_button.type = "button";
+            new_button.classList.add("btn", "btn-secondary");
+            new_button.onclick = OnButtonClick;
+            new_button.textContent = "Create Playlist";
+
+            second_div.appendChild(new_button);
+
+            clearInterval(jsInitCheckTimer);
+        }
+    }
 }
 
 // thenでチェーンすることでPromiseResultが取得できる
@@ -31,13 +82,24 @@ function OnButtonClick() {
         "Please input playlist name without extension",
     );
 
+    // キャンセル
     if (playlistName == null) return null;
 
-    var params = location.href.replace("https://beatsaver.com/?", "");
+    var params = "";
+    var defaultOrder = "sortOrder=Relevance";
+
+    if (location.href == "https://beatsaver.com/") {
+        params = defaultOrder;
+    } else if (location.href.match(/order=/)) {
+        params = location.href.replace("https://beatsaver.com/?", "").replace('order','sortOrder');
+    } else {
+        params =
+            location.href.replace("https://beatsaver.com/?", "") +'&'+ defaultOrder;
+    }
 
     CreateMapDataJson(params)
         .then((playlistJson) => {
-            const data = JSON.stringify(playlistJson,null,4);
+            const data = JSON.stringify(playlistJson, null, 4);
             const link = document.createElement("a");
             link.href = "data:text/plain," + encodeURIComponent(data);
             console.log(link.href);
@@ -59,25 +121,25 @@ function CreateMapDataJson(params) {
             songs: [],
         };
 
-
-        let pageNumbers = [0,1,2,3,4,5,6,7,8,9];
+        // 最大200譜面
+        let pageNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
         let promise = Promise.resolve(playlistJson);
 
-        for(const pageNumber of pageNumbers) {
+        for (const pageNumber of pageNumbers) {
             promise = promise.then((playlistJson2) => {
                 if (pageNumber == 9) {
                     // Promiseを返さないと待ってくれない
-                    return RequestBeatSaver(pageNumber,params, playlistJson2)
+                    return RequestBeatSaver(pageNumber, params, playlistJson2)
                         .then((playlistJson3) => resolve(playlistJson3))
                         .catch(() => reject("error"));
                 }
 
-                return RequestBeatSaver(pageNumber,params, playlistJson2);
+                return RequestBeatSaver(pageNumber, params, playlistJson2);
             });
         }
 
-        return promise
+        return promise;
     });
 }
 
@@ -97,6 +159,8 @@ function RequestBeatSaver(page, params, playlistJson) {
                 }
             })
             .then((responseJson) => {
+                console.log(responseJson);
+
                 if (responseJson.docs == null) {
                     console.log("null");
                     resolve(playlistJson);
