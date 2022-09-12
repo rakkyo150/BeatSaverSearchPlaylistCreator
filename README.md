@@ -1,5 +1,8 @@
+## 日本語版READMEは[こちら](README_JP.md)
 # BeatSaverSearchPlaylistCreator
-This is the google chrome extention that creates a playlist with the search results of beat saver.
+This is the google chrome extention that creates a playlist with the search results of beat saver.<br>
+It would also work with Edge and other Chrome-based browsers.<vr>
+If you view the playlist with a text editor or similar, the parameters used for the search can be found later.
 
 ![description](https://user-images.githubusercontent.com/86054813/189758107-60e05119-9d61-4807-9aef-6f8898aa34c0.png)
 
