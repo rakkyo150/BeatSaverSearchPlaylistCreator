@@ -1,6 +1,6 @@
 window.onload = start;
 
-var progress_bar;
+let progress_bar;
 
 function start() {
     let lastUrl = "";
@@ -8,9 +8,9 @@ function start() {
     // 初回実行の必要あり
     core();
 
-    var main = document.querySelector("main");
+    const main = document.querySelector("main");
 
-    var mo = new MutationObserver(function () {
+    const mo = new MutationObserver(function () {
         let url = location.href;
         console.log(url);
         if (url !== lastUrl) {
@@ -18,7 +18,7 @@ function start() {
             core();
         }
     });
-    var config = {
+    const config = {
         childList: true,
     };
     mo.observe(main, config);
@@ -46,22 +46,22 @@ function core() {
                 return;
             }
 
-            var form = document.querySelector("body main form");
+            const form = document.querySelector("body main form");
             console.log(form);
 
-            var div_row_count = form.querySelectorAll("div.row");
+            const div_row_count = form.querySelectorAll("div.row");
             // ボタンの増殖防止
             if (div_row_count.length == 3) return;
 
-            var new_div = document.createElement("div");
+            const new_div = document.createElement("div");
             new_div.classList.add("row");
             form.appendChild(new_div);
 
-            var second_div = document.createElement("div");
+            const second_div = document.createElement("div");
             second_div.classList.add("mb-3", "d-grid");
             new_div.appendChild(second_div);
 
-            var new_button = document.createElement("button");
+            const new_button = document.createElement("button");
             new_button.type = "button";
             new_button.classList.add("btn", "btn-secondary");
             new_button.onclick = OnButtonClick;
@@ -69,7 +69,7 @@ function core() {
 
             second_div.appendChild(new_button);
 
-            var progress_div = document.createElement("div");
+            const progress_div = document.createElement("div");
             progress_div.classList.add("progress");
             progress_div.style = "height: 5px;";
             second_div.appendChild(progress_div);
@@ -94,15 +94,15 @@ function core() {
 
 function OnButtonClick() {
     console.log(location.href);
-    var playlistName = window.prompt(
+    const playlistName = window.prompt(
         "Please input playlist name without extension",
     );
 
     // キャンセル
     if (playlistName == null) return null;
 
-    var params = "";
-    var defaultOrder = "sortOrder=Relevance";
+    let params = "";
+    const defaultOrder = "sortOrder=Relevance";
 
     if (location.href == "https://beatsaver.com/") {
         params = defaultOrder;
@@ -138,14 +138,14 @@ function OnButtonClick() {
 
 function CreateMapDataJson(params) {
     return new Promise((resolve, reject) => {
-        var playlistJson = {
+        let playlistJson = {
             playlistTitle: "test",
             playlistAuthor: "test",
             songs: [],
         };
 
         // 最大20譜面×10ページの200譜面
-        let pageNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        const pageNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
         let promise = Promise.resolve(playlistJson);
 
@@ -175,7 +175,7 @@ function RequestBeatSaver(page, params, playlistJson) {
             .then((response) => {
                 if (response.ok) {
                     console.log(response);
-                    var promise = response.json();
+                    const promise = response.json();
                     return promise;
                 } else {
                     throw new Error();
@@ -183,7 +183,7 @@ function RequestBeatSaver(page, params, playlistJson) {
             })
             .then((responseJson) => {
                 console.log(responseJson);
-                var progressPercentage = (page + 1) * 10;
+                const progressPercentage = (page + 1) * 10;
 
                 if (responseJson.docs == null) {
                     console.log("null");
