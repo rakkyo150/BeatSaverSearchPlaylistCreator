@@ -13,7 +13,7 @@ This is the google chrome extention that creates a playlist with the search resu
 The max number of map per playlist is 200.
 
 ## How to install
-1. Download the zip file from [Release](https://github.com/rakkyo150/BeatSaverSearchPlaylistCreator/releases)
+1. Download the zip file from [here](https://github.com/rakkyo150/BeatSaverSearchPlaylistCreator/archive/refs/heads/master.zip)
 2. Unzip
 3. If you use google chrome, go Chrome://extensions and enable developer mode
 4. Load the extension by "LOAD UNPAKED"
