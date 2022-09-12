@@ -141,7 +141,7 @@ function CreateMapDataJson(params) {
     return new Promise((resolve, reject) => {
         let playlistJson = {
             playlistTitle: playlistName,
-            playlistAuthor: "PlaylistCreatorFromBeatSaverSearch",
+            playlistAuthor: "BeatSaverSearchPlaylistCreator",
             songs: [],
             params: params,
             image: "base64," + base64Image

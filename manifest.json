@@ -1,8 +1,8 @@
 {
-    "name": "PlaylistCreatorFromBeatSaverSearch",
+    "name": "BeatSaverSearchPlaylistCreator",
     "version": "1.0.0",
     "manifest_version": 3,
-    "description": "This extension is to create playlist from beat saver search",
+    "description": "This is the google chrome extention that creates a playlist with the search results of beat saver",
     "content_scripts": [
         {
             "matches": [
