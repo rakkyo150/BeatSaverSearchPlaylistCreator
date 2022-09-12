@@ -1,0 +1,18 @@
+{
+    "name": "PlaylistCreatorFromBeatSaverSearch",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "description": "This extension is to create playlist from beat saver search",
+    "content_scripts": [
+        {
+            "matches": [
+                "https://beatsaver.com/?*"
+            ],
+            "js": [
+                "BeatSaver.js"
+            ],
+            "run_at": "document_end",
+            "all_frames": true
+        }
+    ]
+}
